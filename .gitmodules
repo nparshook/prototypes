@@ -1,0 +1,3 @@
+[submodule "site-resources"]
+	path = site-resources
+	url = https://github.com/nparshook/site-resources.git
