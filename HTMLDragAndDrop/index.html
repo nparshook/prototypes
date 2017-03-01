@@ -54,20 +54,24 @@
                 justify-content: center;
             }
 
-            .triangle {
-                position: absolute;
-                width: 0;
-                height: 0;
-                border-bottom: 140px solid #844747;
-                border-left: 70px solid transparent;
-                border-right: 70px solid transparent;
+            .oval {
+              position: absolute;
+              width: 120px;
+              height: 60px;
+              background: #847347;
+              -moz-border-radius: 60px /30px;
+              -webkit-border-radius: 60px /30px;
+              border-radius: 60px / 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
 
         </style>
         <script>
             var draggableHandling = (function () {
                 var numCopies = 0;
-                var shapes = ['square', 'circle', 'triangle'];
+                var shapes = ['square', 'circle', 'oval'];
                 var makeNode = function (id) {
                     var newNode;
                     newNode = document.createElement("div");
@@ -148,8 +152,8 @@
             <div id="circle" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
                 <h1>Circle</h1>
             </div>
-            <div id="triangle" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
-                <h1>Triangle</h1>
+            <div id="oval" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
+                <h1>Oval</h1>
             </div>
         </div>
         <div id="div1" ondrop="draggableHandling.dropCopyMove(event)" ondragover="draggableHandling.dragover(event)"></div>
