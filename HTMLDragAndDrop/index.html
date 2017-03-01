@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style>
+            body,
+            html {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            #div1 {
+                width: 80%;
+                height: auto;
+                min-height: 100%;
+                background: #aaaaaa;
+                float: left;
+            }
+
+            #div2 {
+                width: 20%;
+                background: #2f5084;
+                height: auto;
+                min-height: 100%;
+                float: left;
+            }
+
+            .item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .square {
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                background: #844784;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .circle {
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                background: #4e8e4f;
+                -moz-border-radius: 60px;
+                -webkit-border-radius: 60px;
+                border-radius: 60px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .triangle {
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-bottom: 140px solid #844747;
+                border-left: 70px solid transparent;
+                border-right: 70px solid transparent;
+            }
+
+        </style>
+        <script>
+            var draggableHandling = (function () {
+                var numCopies = 0;
+                var shapes = ['square', 'circle', 'triangle'];
+                var makeNode = function (id) {
+                    var newNode;
+                    newNode = document.createElement("div");
+                    newNode.id = "node" + numCopies;
+                    numCopies = numCopies + 1;
+                    var name = document.createTextNode(newNode.id);
+                    newNode.append(name);
+                    newNode.setAttribute("class", id);
+                    newNode.setAttribute("contenteditable", true);
+                    newNode.setAttribute("draggable", true);
+                    newNode.setAttribute("ondragstart", "draggableHandling.dragstart(event)");
+                    newNode.setAttribute("ondragend", "draggableHandling.dragend(event)");
+                    return newNode;
+                }
+
+                return {
+                    dragstart: function (event) {
+                        console.log("dragStart");
+                        var style = window.getComputedStyle(event.target, null);
+                        var info = {
+                            'offset': (parseInt(style.getPropertyValue("left"), 10) - event.clientX) + ',' + (parseInt(style.getPropertyValue("top"), 10) - event.clientY),
+                            'id': event.target.id
+                        };
+                        event.dataTransfer.setData("text/plain", JSON.stringify(info));
+                        event.effectAllowed = "copyMove";
+                    },
+
+                    dragover: function (ev) {
+                        console.log("dragOver");
+                        ev.preventDefault();
+                    },
+
+                    dropCopyMove: function (ev) {
+                        console.log("Drop");
+                        ev.preventDefault();
+                        var info = JSON.parse(ev.dataTransfer.getData("text/plain"));
+                        var offset = info['offset'].split(',');
+                        var id = info['id'];
+                        var targetNode = null;
+                        if (shapes.includes(id)) {
+                            targetNode = makeNode(id);
+                            offset = [0, 0];
+                            console.log(targetNode);
+                        } else {
+                            targetNode = document.getElementById(id);
+                        }
+                        targetNode.style.left = (ev.clientX + parseInt(offset[0], 10)) + 'px';
+                        targetNode.style.top = (ev.clientY + parseInt(offset[1], 10)) + 'px';
+                        if (shapes.includes(id)) {
+                            ev.target.appendChild(targetNode);
+                        }
+                    },
+
+                    dropDel: function (ev) {
+                        console.log("Drop Delete");
+                        ev.preventDefault();
+                        var info = JSON.parse(ev.dataTransfer.getData("text/plain"));
+                        var id = info['id'];
+                        if (!shapes.includes(id)) {
+                            var targetNode = document.getElementById(id);
+                            targetNode.remove();
+                        }
+                    },
+
+                    dragend: function (ev) {
+                        console.log("dragEnd");
+                        ev.dataTransfer.clearData();
+                    }
+                };
+            })();
+        </script>
+    </head>
+    <body>
+        <div id="div2" ondrop="draggableHandling.dropDel(event)" ondragover="draggableHandling.dragover(event)">
+            <div id="square" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
+                <h1>Square</h1>
+            </div>
+            <div id="circle" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
+                <h1>Circle</h1>
+            </div>
+            <div id="triangle" class="item" contenteditable="false" draggable="true" ondragstart="draggableHandling.dragstart(event)" ondragend="draggableHandling.dragend(event)">
+                <h1>Triangle</h1>
+            </div>
+        </div>
+        <div id="div1" ondrop="draggableHandling.dropCopyMove(event)" ondragover="draggableHandling.dragover(event)"></div>
+    </body>
+</html>
